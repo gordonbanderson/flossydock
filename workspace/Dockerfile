@@ -58,10 +58,15 @@ RUN groupadd -g ${PGID} laradock && \
 #   - ...
 #
 
+################################################
+# Install other software missing from base image
+# @todo Move to a base image
+################################################
+RUN apt-get update -yqq && apt-get -y install iputils-ping traceroute vim less figlet sudo
+
 ###########################################################################
 # Set Timezone
 ###########################################################################
-
 ARG TZ=UTC
 ENV TZ ${TZ}
 
@@ -71,7 +76,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # User Aliases
 ###########################################################################
 RUN groupadd -g ${PGID} flossydock && \
-    useradd -u ${PUID} -g flossydock -m flossydock
+    useradd -u ${PUID} -g flossydock -m flossydock && \
+
+    # Add flossydock to sudo, with no password required
+    adduser flossydock sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER root
 
@@ -155,6 +164,8 @@ RUN echo "" >> ~/.bashrc && \
 	sed -i 's/\r//' /home/flossydock/aliases.sh && \
 	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
 	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+	echo 'source /etc/bash_completion.d/git-prompt' >> ~/.bashrc && \
+	echo 'figlet -f small "Flossydock Workspace"' >> ~/.bashrc
 
 USER root
 RUN echo "" >> ~/.bashrc && \
@@ -164,6 +175,8 @@ RUN echo "" >> ~/.bashrc && \
 	sed -i 's/\r//' /home/flossydock/aliases.sh && \
 	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
 	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+	echo 'source /etc/bash_completion.d/git-prompt' >> ~/.bashrc && \
+	echo 'figlet -f small "Flossydock Workspace"' >> ~/.bashrc
 
 
 ###########################################################################
@@ -718,6 +731,19 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
     # Install the pgsql client
     apt-get -y install postgresql-client \
 ;fi
+
+
+#####################################
+# mysql client
+#####################################
+
+ARG INSTALL_MYSQL_CLIENT=false
+RUN if [ ${INSTALL_MYSQL_CLIENT} = true ]; then \
+    # Install the mysql client
+    apt-get update -yqq && \
+    apt-get install -y mysql-client \
+;fi
+
 
 ###########################################################################
 # Dusk Dependencies:

@@ -417,7 +417,7 @@ RUN echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]phpfm-72:\[\e[m\]\[\e[34m\]
 #@todo Flag check needed here
 RUN sed -i '/^;catch_workers_output/ccatch_workers_output = yes' "/usr/local/etc/php-fpm.d/www.conf" \
     && sed -i '/^;php_flag\[display_errors\]/cphp_flag[display_errors] = on' "/usr/local/etc/php-fpm.d/www.conf" \
-   && sed -i '/^;php_admin_value\[error_log\]/cphp_admin_value[error_log] = /var/log/php/fpm-error.log' "/usr/local/etc/php-fpm.d/www.conf" \
+    && sed -i '/^;php_admin_value\[error_log\]/cphp_admin_value[error_log] = /var/log/php/fpm-error.log' "/usr/local/etc/php-fpm.d/www.conf" \
     && sed -i '/^;php_admin_flag\[log_errors\]/cphp_admin_flag[log_errors] = on' "/usr/local/etc/php-fpm.d/www.conf"
 
 

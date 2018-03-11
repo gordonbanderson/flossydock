@@ -22,7 +22,9 @@ ARG PHP_UPSTREAM_PORT=9000
 
 # Set upstream conf and remove the default conf
 RUN echo "upstream php-upstream { server ${PHP_UPSTREAM_CONTAINER}:${PHP_UPSTREAM_PORT}; }" > /etc/nginx/conf.d/upstream.conf \
-    && rm /etc/nginx/conf.d/default.conf
+    && rm /etc/nginx/conf.d/default.conf \
+    && echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]nginx:\[\e[m\]\[\e[34m\]\w\[\e[m\]\\$ "' >> ~/.bashrc
+
 
 CMD ["nginx"]
 

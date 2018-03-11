@@ -391,6 +391,15 @@ RUN php -v | head -n 1 | grep -q "PHP 7.2."
 ADD ./laravel.ini /usr/local/etc/php/conf.d
 ADD ./xlaravel.pool.conf /usr/local/etc/php-fpm.d/
 
+RUN echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]phpfm-72:\[\e[m\]\[\e[34m\]\w\[\e[m\]\\$ "' >> ~/.bashrc
+
+#@todo Flag check needed here
+RUN sed -i '/^;catch_workers_output/ccatch_workers_output = yes' "/usr/local/etc/php-fpm.d/www.conf" \
+    && sed -i '/^;php_flag\[display_errors\]/cphp_flag[display_errors] = on' "/usr/local/etc/php-fpm.d/www.conf" \
+   && sed -i '/^;php_admin_value\[error_log\]/cphp_admin_value[error_log] = /var/log/php/fpm-error.log' "/usr/local/etc/php-fpm.d/www.conf" \
+    && sed -i '/^;php_admin_flag\[log_errors\]/cphp_admin_flag[log_errors] = on' "/usr/local/etc/php-fpm.d/www.conf"
+
+
 #RUN rm -r /var/lib/apt/lists/*
 
 RUN usermod -u 1000 www-data

@@ -42,6 +42,12 @@ RUN rm /var/log/lastlog /var/log/faillog
 #   - ...
 #
 
+################################################
+# Install other software missing from base image
+# @todo Move to a base image
+################################################
+RUN apt-get update -yqq && apt-get -y install iputils-ping traceroute vim less figlet sudo
+
 #####################################
 # Non-Root User:
 #####################################
@@ -54,7 +60,11 @@ ENV PUID ${PUID}
 ENV PGID ${PGID}
 
 RUN groupadd -g ${PGID} flossydock && \
-    useradd -u ${PUID} -g flossydock -m flossydock
+    useradd -u ${PUID} -g flossydock -m flossydock && \
+
+    # Add flossydock to sudo, with no password required
+    adduser flossydock sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 #####################################
 # SOAP:
@@ -144,7 +154,8 @@ RUN echo "" >> ~/.bashrc && \
 	sed -i 's/\r//' /home/flossydock/aliases.sh && \
 	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
 	echo 'source /etc/bash_completion.d/git-prompt' >> ~/.bashrc && \
-	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]workspace:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]workspace:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc && \
+	echo 'figlet -f small "Flossydock Workspace"' >> ~/.bashrc
 
 USER root
 RUN echo "" >> ~/.bashrc && \
@@ -154,7 +165,8 @@ RUN echo "" >> ~/.bashrc && \
 	sed -i 's/\r//' /home/flossydock/aliases.sh && \
 	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
 	echo 'source /etc/bash_completion.d/git-prompt' >> ~/.bashrc && \
-	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]workspace:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]workspace:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc && \
+	echo 'figlet -f small "Flossydock Workspace"' >> ~/.bashrc
 
 #####################################
 # xDebug:
@@ -698,6 +710,18 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
     apt-get update -yqq && \
     apt-get -y install postgresql-client \
 ;fi
+
+#####################################
+# mysql client
+#####################################
+
+ARG INSTALL_MYSQL_CLIENT=false
+RUN if [ ${INSTALL_MYSQL_CLIENT} = true ]; then \
+    # Install the mysql client
+    apt-get update -yqq && \
+    apt-get install -y mysql-client \
+;fi
+
 
 #####################################
 # Dusk Dependencies:

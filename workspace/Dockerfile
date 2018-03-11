@@ -7,7 +7,7 @@
 #    https://github.com/Laradock/workspace
 #
 # To change its version, see the available Tags on the Docker Hub:
-#    https://hub.docker.com/r/laradock/workspace/tags/
+#    https://hub.docker.com/r/laravel/workspace/tags/
 #
 # Note: Base Image name format {image-tag}-{php-version}
 #
@@ -70,6 +70,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ###########################################################################
 # User Aliases
 ###########################################################################
+RUN groupadd -g ${PGID} flossydock && \
+    useradd -u ${PUID} -g flossydock -m flossydock
 
 USER root
 
@@ -98,12 +100,11 @@ RUN echo "" >> ~/.bashrc && \
 USER root
 
 # Add the composer.json
-COPY ./composer.json /home/laradock/.composer/composer.json
+COPY ./composer.json /home/flossydock/.composer/composer.json
 
-# Make sure that ~/.composer belongs to laradock
-RUN chown -R laradock:laradock /home/laradock/.composer
-
-USER laradock
+# Make sure that ~/.composer belongs to flossydock
+RUN chown -R flossydock:flossydock /home/flossydock/.composer
+USER flossydock
 
 # Check if global install need to be ran
 ARG COMPOSER_GLOBAL_INSTALL=false
@@ -145,11 +146,32 @@ COPY ./crontab /etc/cron.d
 
 RUN chmod -R 644 /etc/cron.d
 
+USER flossydock
+COPY ./aliases.sh /home/flossydock/aliases.sh
+RUN echo "" >> ~/.bashrc && \
+    echo "# Load Custom Aliases" >> ~/.bashrc && \
+    echo "source /home/flossydock/aliases.sh" >> ~/.bashrc && \
+	echo "" >> ~/.bashrc && \
+	sed -i 's/\r//' /home/flossydock/aliases.sh && \
+	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
+	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+
+USER root
+RUN echo "" >> ~/.bashrc && \
+    echo "# Load Custom Aliases" >> ~/.bashrc && \
+    echo "source /home/flossydock/aliases.sh" >> ~/.bashrc && \
+	echo "" >> ~/.bashrc && \
+	sed -i 's/\r//' /home/flossydock/aliases.sh && \
+	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
+	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+
+
 ###########################################################################
 # SOAP:
 ###########################################################################
 
 USER root
+=======
 
 ARG INSTALL_SOAP=false
 ARG PHP_VERSION=${PHP_VERSION}
@@ -235,8 +257,8 @@ RUN if [ ${INSTALL_WORKSPACE_SSH} = true ]; then \
         && rm -f /tmp/id_rsa* \
         && chmod 644 /root/.ssh/authorized_keys /root/.ssh/id_rsa.pub \
     && chmod 400 /root/.ssh/id_rsa \
-    && cp -rf /root/.ssh /home/laradock \
-    && chown -R laradock:laradock /home/laradock/.ssh \
+    && cp -rf /root/.ssh /home/flossydock \
+    && chown -R flossydock:flossydock /home/flossydock/.ssh \
 ;fi
 
 ###########################################################################
@@ -326,7 +348,7 @@ RUN if [ ${INSTALL_DRUPAL_CONSOLE} = true ]; then \
     chmod +x /usr/local/bin/drupal \
 ;fi
 
-USER laradock
+USER flossydock
 
 ###########################################################################
 # Node / NVM:
@@ -338,8 +360,7 @@ ENV NODE_VERSION ${NODE_VERSION}
 ARG INSTALL_NODE=false
 ARG NPM_REGISTRY
 ENV NPM_REGISTRY ${NPM_REGISTRY}
-ENV NVM_DIR /home/laradock/.nvm
-
+ENV NVM_DIR /home/flossydock/.nvm
 RUN if [ ${INSTALL_NODE} = true ]; then \
     # Install nvm (A Node Version Manager)
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && \
@@ -366,7 +387,7 @@ USER root
 
 RUN if [ ${INSTALL_NODE} = true ]; then \
     echo "" >> ~/.bashrc && \
-    echo 'export NVM_DIR="/home/laradock/.nvm"' >> ~/.bashrc && \
+    echo 'export NVM_DIR="/home/flossydock/.nvm"' >> ~/.bashrc && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> ~/.bashrc \
 ;fi
 
@@ -381,7 +402,7 @@ RUN if [ ${NPM_REGISTRY} ]; then \
 # YARN:
 ###########################################################################
 
-USER laradock
+USER flossydock
 
 ARG INSTALL_YARN=false
 ARG YARN_VERSION=latest
@@ -403,7 +424,7 @@ USER root
 
 RUN if [ ${INSTALL_YARN} = true ]; then \
     echo "" >> ~/.bashrc && \
-    echo 'export YARN_DIR="/home/laradock/.yarn"' >> ~/.bashrc && \
+    echo 'export YARN_DIR="/home/flossydock/.yarn"' >> ~/.bashrc && \
     echo 'export PATH="$YARN_DIR/bin:$PATH"' >> ~/.bashrc \
 ;fi
 
@@ -453,11 +474,22 @@ RUN if [ ${INSTALL_V8JS} = true ]; then \
     && echo "extension=v8js.so" >> /etc/php/${PHP_VERSION}/cli/php.ini \
 ;fi
 
+
+#####################################
+# Non-root user : PHPUnit path
+#####################################
+
+# add ./vendor/bin to non-root user's bashrc (needed for phpunit)
+USER flossydock
+
+RUN echo "" >> ~/.bashrc && \
+    echo 'export PATH="/var/www/vendor/bin:$PATH"' >> ~/.bashrc
+
 ###########################################################################
 # Laravel Envoy:
 ###########################################################################
 
-USER laradock
+USER flossydock
 
 ARG INSTALL_LARAVEL_ENVOY=false
 
@@ -486,7 +518,8 @@ RUN if [ ${INSTALL_LARAVEL_INSTALLER} = true ]; then \
 	composer global require "laravel/installer" \
 ;fi
 
-###########################################################################
+
+#####################################
 # Deployer:
 ###########################################################################
 
@@ -505,8 +538,9 @@ RUN if [ ${INSTALL_DEPLOYER} = true ]; then \
 
 ###########################################################################
 # Prestissimo:
+
 ###########################################################################
-USER laradock
+USER flossydock
 
 ARG INSTALL_PRESTISSIMO=false
 
@@ -611,7 +645,7 @@ RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
     ;fi\
 ;fi
 
-USER laradock
+USER flossydock
 
 ###########################################################################
 # Symfony:

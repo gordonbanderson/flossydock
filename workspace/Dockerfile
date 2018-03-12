@@ -62,7 +62,7 @@ RUN groupadd -g ${PGID} laradock && \
 # Install other software missing from base image
 # @todo Move to a base image
 ################################################
-RUN apt-get update -yqq && apt-get -y install iputils-ping traceroute vim less figlet sudo
+RUN apt-get update -yqq && apt-get -y install iputils-ping traceroute vim less figlet sudo wget
 
 ###########################################################################
 # Set Timezone

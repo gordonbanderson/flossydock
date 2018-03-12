@@ -75,6 +75,7 @@ EXPOSE 9312 9306
 
 COPY /scripts/* /
 COPY /conf/* /usr/local/sphinx/etc/
+COPY /webhooks/* /root/gows/
 
 #Use this to debug if sphinx does not start as expected
 #ENTRYPOINT ["tail", "-f", "/dev/null"]

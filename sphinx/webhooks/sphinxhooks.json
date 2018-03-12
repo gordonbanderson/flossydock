@@ -1,7 +1,17 @@
 [
   {
+    "id": "reload",
+    "execute-command": "/docker-entry.sh",
+    "command-working-directory": "/"
+  },
+  {
     "id": "reindex",
-    "execute-command": "ls > /tmp/testhook.txt",
+    "execute-command": "/reindex.sh",
+    "command-working-directory": "/"
+  },
+  {
+    "id": "rotate",
+    "execute-command": "/rotate.sh",
     "command-working-directory": "/"
   }
 ]

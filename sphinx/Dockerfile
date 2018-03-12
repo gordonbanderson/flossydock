@@ -77,7 +77,7 @@ COPY /scripts/* /
 COPY /conf/* /usr/local/sphinx/etc/
 COPY /webhooks/* /root/gows/
 
-#Use this to debug if sphinx does not start as expected
+#Use this to debug if sphinx does not start as expected - comment out the following 2 commands that normally start this container
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/docker-entry.sh"]

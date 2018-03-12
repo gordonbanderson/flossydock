@@ -696,6 +696,19 @@ services:
       networks:
         - backend
 
+### Sphinx Container #########################################
+
+    sphinx:
+      build: ./sphinx
+      volumes:
+        - ${DATA_SAVE_PATH}/sphinx:/usr/local/sphinx/data
+        - ${CONFIG_SAVE_PATH}/sphinx/:/usr/local/sphinx/etc/conf.d
+
+      ports:
+        - "9312:9312"
+      networks:
+        - backend
+
 ### AWS EB-CLI ####
     aws:
       build:

@@ -184,7 +184,6 @@ RUN echo "" >> ~/.bashrc && \
 ###########################################################################
 
 USER root
-=======
 
 ARG INSTALL_SOAP=false
 ARG PHP_VERSION=${PHP_VERSION}

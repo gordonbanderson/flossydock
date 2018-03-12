@@ -1,0 +1,7 @@
+[
+  {
+    "id": "reindex",
+    "execute-command": "ls > /tmp/testhook.txt",
+    "command-working-directory": "/"
+  }
+]

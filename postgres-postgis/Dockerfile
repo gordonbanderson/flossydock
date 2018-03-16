@@ -1,6 +1,6 @@
 FROM mdillon/postgis:latest
 
-MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
+LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 RUN echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]postgis:\[\e[m\]\[\e[34m\]\w\[\e[m\]\\$ "' >> ~/.bashrc
 

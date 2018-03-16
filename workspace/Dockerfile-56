@@ -14,7 +14,7 @@
 
 FROM laradock/workspace:2.0-56
 
-MAINTAINER Mahmoud Zalt <mahmoud@zalt.me>
+LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
 # Remove Faillog and Lastlog to reduce the size of the final image.
 RUN rm /var/log/lastlog /var/log/faillog
@@ -149,9 +149,13 @@ RUN chmod -R 644 /etc/cron.d
 #####################################
 # User Aliases
 #####################################
+USER root
 
+<<<<<<< HEAD
 USER flossydock
 COPY ./aliases.sh /home/flossydock/aliases.sh
+=======
+COPY ./aliases.sh /home/laradock/aliases.sh
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source /home/flossydock/aliases.sh" >> ~/.bashrc && \
@@ -169,9 +173,11 @@ RUN echo "" >> ~/.bashrc && \
 	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
     echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
 
+
 #####################################
 # xDebug:
 #####################################
+USER root
 
 ARG INSTALL_XDEBUG=false
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
@@ -241,12 +247,10 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
 # AMQP:
 #####################################
 
-# Check if Mongo needs to be installed
 ARG INSTALL_AMQP=false
 ENV INSTALL_AMQP ${INSTALL_AMQP}
 RUN if [ ${INSTALL_AMQP} = true ]; then \
     apt-get install librabbitmq-dev -y && \
-    # Install the mongodb extension
     pecl -q install amqp && \
     echo "extension=amqp.so" >> /etc/php/5.6/mods-available/amqp.ini && \
     ln -s /etc/php/5.6/mods-available/amqp.ini /etc/php/5.6/cli/conf.d/30-amqp.ini \
@@ -416,6 +420,23 @@ RUN if [ ${INSTALL_AEROSPIKE} = true ]; then \
 
 RUN if [ ${INSTALL_AEROSPIKE} = false ]; then \
     rm /etc/php/5.6/cli/conf.d/aerospike.ini \
+;fi
+
+#####################################
+# PHP V8JS:
+#####################################
+USER root
+
+ARG INSTALL_V8JS=false
+ENV INSTALL_V8JS ${INSTALL_V8JS}
+
+RUN if [ ${INSTALL_V8JS} = true ]; then \
+    # Install the php V8JS extension
+    add-apt-repository -y ppa:pinepain/libv8-archived \
+    && apt-get update -yqq \
+    && apt-get install -y php5.6-xml php5.6-dev php-pear libv8-dev \
+    && pecl install v8js-0.6.4 \
+    && echo "extension=v8js.so" >> /etc/php/5.6/cli/php.ini \
 ;fi
 
 #####################################
@@ -605,7 +626,8 @@ USER root
 ARG INSTALL_IMAGEMAGICK=false
 ENV INSTALL_IMAGEMAGICK ${INSTALL_IMAGEMAGICK}
 RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
-    apt-get install -y --force-yes imagemagick php-imagick \
+    apt-get update -yqq \
+    && apt-get install -y --force-yes imagemagick php-imagick \
 ;fi
 
 #####################################
@@ -639,6 +661,8 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
 # Dusk Dependencies:
 #####################################
 USER root
+ARG CHROME_DRIVER_VERSION=stable
+ENV CHROME_DRIVER_VERSION ${CHROME_DRIVER_VERSION}
 ARG INSTALL_DUSK_DEPS=false
 ENV INSTALL_DUSK_DEPS ${INSTALL_DUSK_DEPS}
 RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
@@ -649,16 +673,14 @@ RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
     libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4 xvfb \
     gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi \
     xfonts-base xfonts-scalable x11-apps \
-
   # Install Google Chrome
   && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
   && dpkg -i --force-depends google-chrome-stable_current_amd64.deb \
   && apt-get -y -f install \
   && dpkg -i --force-depends google-chrome-stable_current_amd64.deb \
   && rm google-chrome-stable_current_amd64.deb \
-
   # Install Chrome Driver
-  && wget https://chromedriver.storage.googleapis.com/2.31/chromedriver_linux64.zip \
+  && wget https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip \
   && unzip chromedriver_linux64.zip \
   && mv chromedriver /usr/local/bin/ \
   && rm chromedriver_linux64.zip \

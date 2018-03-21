@@ -153,11 +153,8 @@ RUN chmod -R 644 /etc/cron.d
 #####################################
 USER root
 
-<<<<<<< HEAD
 USER flossydock
 COPY ./aliases.sh /home/flossydock/aliases.sh
-=======
-COPY ./aliases.sh /home/laradock/aliases.sh
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source /home/flossydock/aliases.sh" >> ~/.bashrc && \
@@ -328,13 +325,9 @@ ARG NODE_VERSION=stable
 ENV NODE_VERSION ${NODE_VERSION}
 ARG INSTALL_NODE=false
 ENV INSTALL_NODE ${INSTALL_NODE}
-<<<<<<< HEAD
 ENV NVM_DIR /home/flossydock/.nvm
-=======
-ENV NVM_DIR /home/laradock/.nvm
 ARG NPM_REGISTRY
 ENV NPM_REGISTRY ${NPM_REGISTRY}
->>>>>>> c34d2d12b3a32c90b4d5697ce6df8e56970dc9f6
 RUN if [ ${INSTALL_NODE} = true ]; then \
     # Install nvm (A Node Version Manager)
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash && \

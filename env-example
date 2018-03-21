@@ -3,6 +3,19 @@
 ###########################################################
 
 ### Paths #################################################
+=======
+###########################################################
+# Basn prompts, only need one of the following:
+###########################################################
+
+#Development prompt
+#BASH_PS1=$'\[\e[32m\]\u@\[\e[m\]\[\e[32m\]HOSTNAME \360\237\220\263  dev:\[\e[m\]\[\e[32m\]\w\[\e[m\]\\$ '
+
+#Production prompt
+BASH_PS1=$'\[\e[31m\]\u@\[\e[m\]\[\e[31m\]HOSTNAME \360\237\220\263  prod:\[\e[m\]\[\e[34m\]\w\[\e[m\]\\$ '
+
+### Application Path ###################################################################################################
+# Point to your code, will be available at `/var/www`.
 
 # Point to the path of your applications code on your host
 APP_CODE_PATH_HOST=../

@@ -281,6 +281,7 @@ services:
         context: ./mariadb
         args:
           - BASH_PS1=${BASH_PS1}
+          - MYSQL_PS1=${MYSQL_PS1}
       volumes:
         - ${DATA_SAVE_PATH}/mariadb:/var/lib/mysql
         - ${MARIADB_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d

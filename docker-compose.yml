@@ -58,8 +58,8 @@ services:
           - BLACKFIRE_CLIENT_ID=${BLACKFIRE_CLIENT_ID}
           - BLACKFIRE_CLIENT_TOKEN=${BLACKFIRE_CLIENT_TOKEN}
         dockerfile: "Dockerfile-${PHP_VERSION}"
-      volumes:
-        - ${DATA_SAVE_PATH}/composer-cache:/home/flossydock/.composer
+      #volumes:
+        #- ${DATA_SAVE_PATH}/composer-cache:/home/flossydock/.composer
       volumes_from:
         - applications
       extra_hosts:
@@ -107,7 +107,8 @@ services:
         - applications
       volumes:
         - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
-        - ${DATA_SAVE_PATH}/public:/var/www/public
+        # @todo Fix this
+        # - ${DATA_SAVE_PATH}/public:/var/www/public
       expose:
         - "9000"
       depends_on:

@@ -5,14 +5,17 @@
 ### Paths #################################################
 =======
 ###########################################################
-# Basn prompts, only need one of the following:
+# Basn prompts, only need one of the following pairs:
 ###########################################################
 
-#Development prompt
+#Development prompts
 #BASH_PS1=$'\[\e[32m\]\u@\[\e[m\]\[\e[32m\]HOSTNAME \360\237\220\263  dev:\[\e[m\]\[\e[32m\]\w\[\e[m\]\\$ '
+#MYSQL_PS1=$'\x1B[32m\u@\h [\d]\x1B[0m> '
 
 #Production prompt
 BASH_PS1=$'\[\e[31m\]\u@\[\e[m\]\[\e[31m\]HOSTNAME \360\237\220\263  prod:\[\e[m\]\[\e[34m\]\w\[\e[m\]\\$ '
+MYSQL_PS1=$'\x1B[31m\u@\h [\d]\x1B[0m> '
+
 
 ### Application Path ###################################################################################################
 # Point to your code, will be available at `/var/www`.

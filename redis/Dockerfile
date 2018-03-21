@@ -10,5 +10,9 @@ VOLUME /data
 
 EXPOSE 6379
 
+ARG BASH_PS1
+ENV BASH_PS1 ${BASH_PS1}
+RUN echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/redis/ >> ~/.bashrc
+
 #CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
 CMD ["redis-server"]

@@ -364,9 +364,11 @@ services:
         - backend
 
 ### Redis Container #########################################
-
     redis:
-      build: ./redis
+      build:
+        context: ./redis
+        args:
+          - BASH_PS1=${BASH_PS1}
       volumes:
         - ${DATA_SAVE_PATH}/redis:/data
       ports:
@@ -404,9 +406,11 @@ services:
         - backend
 
 ### Beanstalkd Container ####################################
-
     beanstalkd:
-      build: ./beanstalkd
+      build:
+        context: ./beanstalkd
+        args:
+          - BASH_PS1=${BASH_PS1}
       ports:
         - "${BEANSTALKD_HOST_PORT}:11300"
       privileged: true

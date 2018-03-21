@@ -101,6 +101,10 @@ services:
 #        - ${DATA_SAVE_PATH}/composer-cache:/home/flossydock/.composer
 #      volumes_from:
 #        - applications
+      #volumes:
+        #- ${DATA_SAVE_PATH}/composer-cache:/home/flossydock/.composer
+      volumes_from:
+        - applications
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
@@ -149,7 +153,7 @@ services:
       volumes:
         - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-        - ${DATA_SAVE_PATH}/public:/var/www/public
+
       expose:
         - "9000"
       extra_hosts:

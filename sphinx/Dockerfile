@@ -12,7 +12,7 @@ ENV SPHINX_VERSION=2.3.2-beta RE2_VERSION=2018-03-01
 #missing in stretch libmysqlclient18
 RUN cd /tmp && apt-get update && \
     apt-get install -y --no-install-recommends make curl ca-certificates libexpat1  libpq5 libodbc1 locales locales libtool re2c \
-    autoconf automake libtool g++ default-libmysqlclient-dev libpq-dev libexpat1-dev git golang  && \
+    autoconf automake libtool g++ default-libmysqlclient-dev libpq-dev libexpat1-dev git  && \
     rm -rf /var/lib/apt/lists/* && \
     sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && \
     locale-gen && \
@@ -53,11 +53,6 @@ RUN ls -lh /usr/local/sphinx/etc/conf.d
 # add custom dicts
 ADD dicts /usr/local/sphinx/dicts
 
-#install webhooks after setting up go workspace (gows)
-RUN mkdir /root/gows && echo 'export GOPATH="/root/gows/"' >> ~/.bashrc && export GOPATH="/root/gows/" && go get github.com/adnanh/webhook
-
-#RUN apt-get -y update && apt-get install -y locate && updatedb && locate sphinx.conf
-
 RUN more /usr/local/etc/sphinx.conf.dist && cp /usr/local/etc/sphinx.conf.dist /usr/local/etc/sphinx.conf
 
 # clean image
@@ -65,19 +60,21 @@ RUN more /usr/local/etc/sphinx.conf.dist && cp /usr/local/etc/sphinx.conf.dist /
 
 #VOLUME ["/usr/local/sphinx/data", "/var/log/sphinx", "/usr/local/sphinx/etc/conf.d"]
 
+
+#RUN systemctl start webhook
+
 #Forward to docker log collector
 RUN ln -sf /dev/stdout /var/log/sphinx/searchd.log \
     && ln -sf /dev/stdout /var/log/sphinx/query.log
 
 # 9312 Sphinx
 # 9306 SphinxQL
-EXPOSE 9312 9306
+# EXPOSE 9312 9306
 
 COPY /scripts/* /
 COPY /conf/* /usr/local/sphinx/etc/
-COPY /webhooks/* /root/gows/
 
-#Use this to debug if sphinx does not start as expected - comment out the following 2 commands that normally start this container
+#Use this to debug if sphinx does not start as expected - usually config file issue
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/docker-entry.sh"]

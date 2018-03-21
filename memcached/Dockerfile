@@ -2,6 +2,7 @@ FROM memcached:latest
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
+# @todo FIX, there is no /home/memcached directory
 
 USER root
 ARG BASH_PS1

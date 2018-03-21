@@ -61,11 +61,16 @@ RUN more /usr/local/etc/sphinx.conf.dist && cp /usr/local/etc/sphinx.conf.dist /
 #VOLUME ["/usr/local/sphinx/data", "/var/log/sphinx", "/usr/local/sphinx/etc/conf.d"]
 
 
-#RUN systemctl start webhook
 
-#Forward to docker log collector
+#Update bash prompt
+ARG BASH_PS1
+ENV BASH_PS1 ${BASH_PS1}
+
+#Forward to docker log collector, finalise bash
 RUN ln -sf /dev/stdout /var/log/sphinx/searchd.log \
-    && ln -sf /dev/stdout /var/log/sphinx/query.log
+    && ln -sf /dev/stdout /var/log/sphinx/query.log \
+    && echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/sphinx/ >> ~/.bashrc
+
 
 # 9312 Sphinx
 # 9306 SphinxQL

@@ -13,6 +13,7 @@ services:
       build:
         context: ./workspace
         args:
+          - BASH_PS1=${BASH_PS1}
           - SHOW_ERRORS=${WORKSPACE_SHOW_ERRORS}
           - INSTALL_XDEBUG=${WORKSPACE_INSTALL_XDEBUG}
           - INSTALL_BLACKFIRE=${INSTALL_BLACKFIRE}
@@ -69,11 +70,11 @@ services:
         - backend
 
 ### PHP-FPM Container #######################################
-
     php-fpm:
       build:
         context: ./php-fpm
         args:
+          - BASH_PS1=${BASH_PS1}
           - INSTALL_XDEBUG=${PHP_FPM_INSTALL_XDEBUG}
           - INSTALL_BLACKFIRE=${INSTALL_BLACKFIRE}
           - INSTALL_SOAP=${PHP_FPM_INSTALL_SOAP}
@@ -140,6 +141,7 @@ services:
         args:
           - PHP_UPSTREAM_CONTAINER=${NGINX_PHP_UPSTREAM_CONTAINER}
           - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
+          - BASH_PS1=${BASH_PS1}
       volumes_from:
         - applications
       volumes:
@@ -703,7 +705,10 @@ services:
 ### Sphinx Container #########################################
 
     sphinx:
-      build: ./sphinx
+      build:
+        context: ./sphinx
+        args:
+          - BASH_PS1=${BASH_PS1}
       volumes:
         - ${DATA_SAVE_PATH}/sphinx:/usr/local/sphinx/data
         - ${CONFIG_SAVE_PATH}/sphinx/:/usr/local/sphinx/etc/conf.d

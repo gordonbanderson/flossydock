@@ -8,9 +8,10 @@ ADD my.cnf /etc/mysql/conf.d/my.cnf
 #Update bash prompt
 ARG BASH_PS1
 ENV BASH_PS1 ${BASH_PS1}
-RUN if [ -n ${BASH_PROMPT_FILE}  ]; then \
-  echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/mariadb/ >> ~/.bashrc \
-;fi
+RUN echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/mariadb/ >> ~/.bashrc
+
+
+# @todo MariaDB prompt
 
 CMD ["mysqld"]
 

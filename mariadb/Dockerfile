@@ -9,7 +9,7 @@ ARG BASH_PS1
 ENV BASH_PS1 ${BASH_PS1}
 RUN if [ -n ${BASH_PS1}  ]; then \
   env && \
-  echo 'export PS1="'$BASH_PS1' "' >> ~/.bashrc \
+  echo 'export PS1="'$BASH_PS1' "' | sed s/HOSTNAME/mariadb/ >> ~/.bashrc \
 ;fi
 
 CMD ["mysqld"]

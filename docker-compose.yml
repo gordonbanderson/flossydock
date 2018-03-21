@@ -398,7 +398,10 @@ services:
 ### Memcached Container #####################################
 
     memcached:
-      build: ./memcached
+      build:
+        context: ./memcached
+        args:
+          - BASH_PS1=${BASH_PS1}
       volumes:
         - ${DATA_SAVE_PATH}/memcached:/var/lib/memcached
       ports:

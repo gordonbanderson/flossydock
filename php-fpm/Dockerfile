@@ -412,7 +412,10 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     rm /var/log/lastlog /var/log/faillog
 
-RUN echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]phpfm-72:\[\e[m\]\[\e[34m\]\w\[\e[m\]\\$ "' >> ~/.bashrc
+#RUN echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]phpfm-72:\[\e[m\]\[\e[34m\]\w\[\e[m\]\\$ "' >> ~/.bashrc
+ARG BASH_PS1
+ENV BASH_PS1 ${BASH_PS1}
+RUN echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/php-fpm/ >> ~/.bashrc
 
 #@todo Flag check needed here
 RUN sed -i '/^;catch_workers_output/ccatch_workers_output = yes' "/usr/local/etc/php-fpm.d/www.conf" \

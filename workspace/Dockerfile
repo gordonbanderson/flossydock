@@ -370,9 +370,11 @@ USER flossydock
 ARG NODE_VERSION=stable
 ENV NODE_VERSION ${NODE_VERSION}
 ARG INSTALL_NODE=false
+
+ENV INSTALL_NODE ${INSTALL_NODE}
+ENV NVM_DIR /home/flossydock/.nvm
 ARG NPM_REGISTRY
 ENV NPM_REGISTRY ${NPM_REGISTRY}
-ENV NVM_DIR /home/flossydock/.nvm
 RUN if [ ${INSTALL_NODE} = true ]; then \
     # Install nvm (A Node Version Manager)
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && \

@@ -58,6 +58,7 @@ services:
           - INSTALL_MONGO=${WORKSPACE_INSTALL_MONGO}
           - INSTALL_AMQP=${WORKSPACE_INSTALL_AMQP}
           - INSTALL_PHPREDIS=${WORKSPACE_INSTALL_PHPREDIS}
+          - INSTALL_PHPMEMCACHED=${WORKSPACE_INSTALL_PHPMEMCACHE}
           - INSTALL_MSSQL=${WORKSPACE_INSTALL_MSSQL}
           - INSTALL_NODE=${WORKSPACE_INSTALL_NODE}
           - NPM_REGISTRY=${WORKSPACE_NPM_REGISTRY}
@@ -105,6 +106,7 @@ services:
         #- ${DATA_SAVE_PATH}/composer-cache:/home/flossydock/.composer
       volumes_from:
         - applications
+        - sphinx # This is be necessary in order to see sphinx config at /usr/local/sphinx/etc/ in workspace
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
@@ -136,6 +138,7 @@ services:
           - INSTALL_BCMATH=${PHP_FPM_INSTALL_BCMATH}
           - INSTALL_GMP=${PHP_FPM_INSTALL_GMP}
           - INSTALL_PHPREDIS=${PHP_FPM_INSTALL_PHPREDIS}
+          - INSTALL_PHPMEMCACHED=${PHP_FPM_INSTALL_PHPMEMCACHE}
           - INSTALL_MEMCACHED=${PHP_FPM_INSTALL_MEMCACHED}
           - INSTALL_OPCACHE=${PHP_FPM_INSTALL_OPCACHE}
           - INSTALL_EXIF=${PHP_FPM_INSTALL_EXIF}
@@ -150,9 +153,14 @@ services:
           - INSTALL_SWOOLE=${PHP_FPM_INSTALL_SWOOLE}
           - INSTALL_IMAGE_OPTIMIZERS=${PHP_FPM_INSTALL_IMAGE_OPTIMIZERS}
           - INSTALL_IMAGEMAGICK=${PHP_FPM_INSTALL_IMAGEMAGICK}
+          - INSTALL_TIDY=${PHP_FPM_INSTALL_TIDY}
+
       volumes:
         - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+
+ #     volumes_from:
+  #      - applications
 
       expose:
         - "9000"
@@ -718,20 +726,21 @@ services:
       networks:
         - backend
 
-### Sphinx Container #########################################
+### Sphinx 232 Container #########################################
     sphinx:
       build:
-        context: ./sphinx
+        context: ./sphinx-232-debian
         args:
           - BASH_PS1=${BASH_PS1}
       volumes:
-        - ${DATA_SAVE_PATH}/sphinx:/usr/local/sphinx/data
-        - ${CONFIG_SAVE_PATH}/sphinx/:/usr/local/sphinx/etc/conf.d
+        - ${DATA_SAVE_PATH}/sphinx:/var/lib/sphinxsearch/data
+        - ${CONFIG_SAVE_PATH}/sphinx/:/etc/sphinxsearch/
 
       ports:
         - "9312:9312"
       networks:
         - backend
+
 
 ### AWS EB-CLI ####
     aws:
@@ -742,3 +751,52 @@ services:
       depends_on:
         - workspace
       tty: true
+
+### Networks Setup ############################################
+
+networks:
+  frontend:
+    driver: "bridge"
+  backend:
+    driver: "bridge"
+
+### Volumes Setup #############################################
+
+volumes:
+  mysql:
+    driver: "local"
+  percona:
+    driver: "local"
+  mssql:
+    driver: "local"
+  postgres:
+    driver: "local"
+  memcached:
+    driver: "local"
+  redis:
+    driver: "local"
+  neo4j:
+    driver: "local"
+  sphinx:
+    driver: "local"
+  mariadb:
+    driver: "local"
+  mongo:
+    driver: "local"
+  minio:
+    driver: "local"
+  rethinkdb:
+    driver: "local"
+  phpmyadmin:
+    driver: "local"
+  adminer:
+    driver: "local"
+  aerospike:
+    driver: "local"
+  caddy:
+    driver: "local"
+  elasticsearch-data:
+    driver: "local"
+  elasticsearch-plugins:
+    driver: "local"
+>>>>>>> ENHANCEMENT: Sphinx containers

@@ -151,11 +151,8 @@ RUN chmod -R 644 /etc/cron.d
 #####################################
 USER root
 
-<<<<<<< HEAD
 USER flossydock
 COPY ./aliases.sh /home/flossydock/aliases.sh
-=======
-COPY ./aliases.sh /home/laradock/aliases.sh
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source /home/flossydock/aliases.sh" >> ~/.bashrc && \

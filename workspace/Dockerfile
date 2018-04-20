@@ -746,6 +746,21 @@ RUN if [ ${INSTALL_MYSQL_CLIENT} = true ]; then \
 ;fi
 
 
+
+#####################################
+# TIDY:
+#####################################
+ARG INSTALL_TIDY=false
+ENV INSTALL_TIDY ${INSTALL_TIDY}
+RUN if [ ${INSTALL_TIDY} = true ]; then \
+    apt-get update && \
+    apt-get install -y libtidy-dev && \
+    rm -r /var/lib/apt/lists/* && \
+    docker-php-ext-install tidy \
+;fi
+
+
+
 ###########################################################################
 # Dusk Dependencies:
 ###########################################################################
@@ -779,6 +794,16 @@ RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
 ARG PHP_VERSION=${PHP_VERSION}
 
 RUN php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
+
+#################
+# Queues for SS #
+#################
+RUN apt-get update && apt-get install -y inotify-tools
+
+#Run here for now, but really needs own docker container.  Need to make core PHP 7 container first I think
+USER flossydock
+COPY scripts/run-queued-jobs.sh /home/flossydock
+
 
 #
 #--------------------------------------------------------------------------

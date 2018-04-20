@@ -388,7 +388,31 @@ RUN if [ ${INSTALL_IMAP} = true ]; then \
     docker-php-ext-install imap \
 ;fi
 
-###########################################################################
+#####################################
+# TIDY:
+#####################################
+ARG INSTALL_TIDY=false
+ENV INSTALL_TIDY ${INSTALL_TIDY}
+RUN if [ ${INSTALL_TIDY} = true ]; then \
+    apt-get update && \
+    apt-get install -y libtidy-dev && \
+    rm -r /var/lib/apt/lists/* && \
+    docker-php-ext-install tidy \
+;fi
+
+
+#####################################
+# PHP MEMCACHED CLIENT:
+#####################################
+ARG INSTALL_PHPMEMCACHED=false
+ENV INSTALL_PHPMEMCACHED ${INSTALL_PHPMEMCACHED}
+RUN if [ ${INSTALL_PHPMEMCACHED} = true ]; then \
+     apt-get update && apt-get install -y libmemcached-dev \
+       # && pecl install memcached \
+        && docker-php-ext-enable memcached \
+;fi
+
+#####################################
 # Check PHP version:
 ###########################################################################
 
@@ -423,6 +447,15 @@ RUN sed -i '/^;catch_workers_output/ccatch_workers_output = yes' "/usr/local/etc
     && sed -i '/^;php_admin_value\[error_log\]/cphp_admin_value[error_log] = /var/log/php/fpm-error.log' "/usr/local/etc/php-fpm.d/www.conf" \
     && sed -i '/^;php_admin_flag\[log_errors\]/cphp_admin_flag[log_errors] = on' "/usr/local/etc/php-fpm.d/www.conf"
 
+#@todo date.timezone has suddenly become an issue, override here as a temporary fix
+RUN echo 'date.timezone = UTC' > /usr/local/etc/php/conf.d/timezone.ini
+
+RUN ls -lh /usr/local/etc/php
+
+#Increase file upload size
+#RUN cat /usr/local/etc/php/php.ini | grep -v upload_max_filesize > /tmp/php.ini \
+#    && echo 'upload_max_filesize = 4M' >> /tmp/php.ini \
+#    && mv /tmp/php.ini /usr/local/etc/php/php.ini
 
 RUN usermod -u 1000 www-data
 

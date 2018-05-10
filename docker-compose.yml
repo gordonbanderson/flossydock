@@ -799,4 +799,3 @@ volumes:
     driver: "local"
   elasticsearch-plugins:
     driver: "local"
->>>>>>> ENHANCEMENT: Sphinx containers

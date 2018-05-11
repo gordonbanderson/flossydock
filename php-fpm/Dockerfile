@@ -18,6 +18,9 @@ FROM laradock/php-fpm:2.2-${PHP_VERSION}
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
+#Trying to circumvent dist download errors
+RUN apt-get update -y && apt-get -y upgrade
+
 #
 #--------------------------------------------------------------------------
 # Mandatory Software's Installation
@@ -198,6 +201,7 @@ RUN if [ ${INSTALL_GMP} = true ]; then \
 ARG INSTALL_MEMCACHED=false
 
 RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
+    php -i && \
     # Install the php memcached extension
     curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz" \
     && mkdir -p memcached \
@@ -291,8 +295,10 @@ ARG INSTALL_INTL=false
 
 RUN if [ ${INSTALL_INTL} = true ]; then \
     # Install intl and requirements
-    apt-get update -yqq && \
-    apt-get install -y zlib1g-dev libicu-dev g++ && \
+    #apt-get update -yqq && \
+    #apt-cache search libicu-dev && \
+    #apt-get install -y zlib1g-dev libicu-dev g++ && \
+    apt-get install -y libicu-dev && \
     docker-php-ext-configure intl && \
     docker-php-ext-install intl \
 ;fi
@@ -400,17 +406,6 @@ RUN if [ ${INSTALL_TIDY} = true ]; then \
     docker-php-ext-install tidy \
 ;fi
 
-
-#####################################
-# PHP MEMCACHED CLIENT:
-#####################################
-ARG INSTALL_PHPMEMCACHED=false
-ENV INSTALL_PHPMEMCACHED ${INSTALL_PHPMEMCACHED}
-RUN if [ ${INSTALL_PHPMEMCACHED} = true ]; then \
-     apt-get update && apt-get install -y libmemcached-dev \
-       # && pecl install memcached \
-        && docker-php-ext-enable memcached \
-;fi
 
 #####################################
 # Check PHP version:

@@ -104,9 +104,9 @@ services:
 #        - applications
       #volumes:
         #- ${DATA_SAVE_PATH}/composer-cache:/home/flossydock/.composer
-      volumes_from:
-        - applications
-        - sphinx # This is be necessary in order to see sphinx config at /usr/local/sphinx/etc/ in workspace
+     # volumes_from:
+      #  - applications
+     #   - sphinx # This is be necessary in order to see sphinx config at /usr/local/sphinx/etc/ in workspace
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
@@ -196,8 +196,8 @@ services:
           - PHP_UPSTREAM_CONTAINER=${NGINX_PHP_UPSTREAM_CONTAINER}
           - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
           - BASH_PS1=${BASH_PS1}
-      volumes_from:
-        - applications
+    #  volumes_from:
+     #   - applications
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
         - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
@@ -733,8 +733,8 @@ services:
         args:
           - BASH_PS1=${BASH_PS1}
       volumes:
-        - ${DATA_SAVE_PATH}/sphinx:/var/lib/sphinxsearch/data
-        - ${CONFIG_SAVE_PATH}/sphinx/:/etc/sphinxsearch/
+        - ${DATA_PATH_HOST}/sphinx:/var/lib/sphinxsearch/data
+        - ${CONFIG_PATH_HOST}/sphinx/:/etc/sphinxsearch/
 
       ports:
         - "9312:9312"
@@ -751,51 +751,3 @@ services:
       depends_on:
         - workspace
       tty: true
-
-### Networks Setup ############################################
-
-networks:
-  frontend:
-    driver: "bridge"
-  backend:
-    driver: "bridge"
-
-### Volumes Setup #############################################
-
-volumes:
-  mysql:
-    driver: "local"
-  percona:
-    driver: "local"
-  mssql:
-    driver: "local"
-  postgres:
-    driver: "local"
-  memcached:
-    driver: "local"
-  redis:
-    driver: "local"
-  neo4j:
-    driver: "local"
-  sphinx:
-    driver: "local"
-  mariadb:
-    driver: "local"
-  mongo:
-    driver: "local"
-  minio:
-    driver: "local"
-  rethinkdb:
-    driver: "local"
-  phpmyadmin:
-    driver: "local"
-  adminer:
-    driver: "local"
-  aerospike:
-    driver: "local"
-  caddy:
-    driver: "local"
-  elasticsearch-data:
-    driver: "local"
-  elasticsearch-plugins:
-    driver: "local"

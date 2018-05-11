@@ -21,19 +21,13 @@ LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 # Start as root
 USER root
 
+#Trying to circumvent dist download errors
+RUN apt-get update -y && apt-get -y upgrade
+
 ###########################################################################
 # Laradock non-root user:
 ###########################################################################
 
-# Add a non-root user to prevent files being created with root permissions on host machine.
-ARG PUID=1000
-ENV PUID ${PUID}
-ARG PGID=1000
-ENV PGID ${PGID}
-
-RUN groupadd -g ${PGID} laradock && \
-    useradd -u ${PUID} -g laradock -m laradock -G docker_env && \
-    usermod -p "*" laradock
 
 #
 #--------------------------------------------------------------------------
@@ -41,7 +35,7 @@ RUN groupadd -g ${PGID} laradock && \
 #--------------------------------------------------------------------------
 #
 # Mandatory Software's such as ("php-cli", "git", "vim", ....) are
-# installed on the base image 'laradock/workspace' image. If you want
+# installed on the base image 'flossydock/workspace' image. If you want
 # to add more Software's or remove existing one, you need to edit the
 # base image (https://github.com/Laradock/workspace).
 #
@@ -62,7 +56,7 @@ RUN groupadd -g ${PGID} laradock && \
 # Install other software missing from base image
 # @todo Move to a base image
 ################################################
-RUN apt-get update -yqq && apt-get -y install iputils-ping traceroute vim less figlet sudo wget
+RUN apt-get -y install iputils-ping traceroute vim less figlet sudo wget
 
 ###########################################################################
 # Set Timezone
@@ -72,30 +66,38 @@ ENV TZ ${TZ}
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-###########################################################################
-# User Aliases
-###########################################################################
+
+# Add a non-root user to prevent files being created with root permissions on host machine.
+ARG PUID=1000
+ENV PUID ${PUID}
+ARG PGID=1000
+ENV PGID ${PGID}
+
 RUN groupadd -g ${PGID} flossydock && \
-    useradd -u ${PUID} -g flossydock -m flossydock && \
+    useradd -u ${PUID} -g flossydock -m flossydock -G docker_env && \
+    usermod -p "*" flossydock && \
+
 
     # Add flossydock to sudo, with no password required
     adduser flossydock sudo && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
+
+
 USER root
 
 COPY ./aliases.sh /root/aliases.sh
-COPY ./aliases.sh /home/laradock/aliases.sh
+COPY ./aliases.sh /home/flossydock/aliases.sh
 
 RUN sed -i 's/\r//' /root/aliases.sh && \
-    sed -i 's/\r//' /home/laradock/aliases.sh && \
-    chown laradock:laradock /home/laradock/aliases.sh && \
+    sed -i 's/\r//' /home/flossydock/aliases.sh && \
+    chown flossydock:flossydock /home/flossydock/aliases.sh && \
     echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source ~/aliases.sh" >> ~/.bashrc && \
 	echo "" >> ~/.bashrc
 
-USER laradock
+USER flossydock
 
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
@@ -140,7 +142,7 @@ RUN echo "" >> ~/.bashrc && \
 ###########################################################################
 
 # add ./vendor/bin to non-root user's bashrc (needed for phpunit)
-USER laradock
+USER flossydock
 
 RUN echo "" >> ~/.bashrc && \
     echo 'export PATH="/var/www/vendor/bin:$PATH"' >> ~/.bashrc
@@ -163,7 +165,7 @@ RUN echo "" >> ~/.bashrc && \
 	echo "" >> ~/.bashrc && \
 	sed -i 's/\r//' /home/flossydock/aliases.sh && \
 	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
-	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc && \
 	echo 'source /etc/bash_completion.d/git-prompt' >> ~/.bashrc && \
 	echo 'figlet -f small "Flossydock Workspace"' >> ~/.bashrc
 
@@ -174,7 +176,7 @@ RUN echo "" >> ~/.bashrc && \
 	echo "" >> ~/.bashrc && \
 	sed -i 's/\r//' /home/flossydock/aliases.sh && \
 	sed -i 's/^#! \/bin\/sh/#! \/bin\/bash/' /home/flossydock/aliases.sh &&  \
-	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc
+	echo 'export PS1="\[\e[32m\]\u@\[\e[m\]\[\e[32m\]\h:\[\e[m\]\[\e[34m\]\w\[$(__git_ps1)\e[m\]\\$ "' >> ~/.bashrc && \
 	echo 'source /etc/bash_completion.d/git-prompt' >> ~/.bashrc && \
 	echo 'figlet -f small "Flossydock Workspace"' >> ~/.bashrc
 
@@ -802,7 +804,7 @@ RUN apt-get update && apt-get install -y inotify-tools
 
 #Run here for now, but really needs own docker container.  Need to make core PHP 7 container first I think
 USER flossydock
-COPY scripts/run-queued-jobs.sh /home/flossydock
+#COPY scripts/run-queued-jobs.sh /home/flossydock
 
 
 #

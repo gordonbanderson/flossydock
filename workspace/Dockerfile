@@ -655,7 +655,7 @@ USER root
 ARG INSTALL_IMAGE_OPTIMIZERS=false
 
 RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
-    apt-get install -y --force-yes jpegoptim optipng pngquant gifsicle && \
+    apt-get install -y --force-yes jpegoptim optipng libpng16-dev pngquant gifsicle && \
     if [ ${INSTALL_NODE} = true ]; then \
         . ~/.bashrc && npm install -g svgo \
     ;fi\
@@ -692,7 +692,8 @@ ARG INSTALL_PYTHON=false
 RUN if [ ${INSTALL_PYTHON} = true ]; then \
   apt-get -y install python python-pip python-dev build-essential  \
   && pip install --upgrade pip  \
-  && pip install --upgrade virtualenv \
+  #&& pip install --upgrade virtualenv \
+  && python -m pip install --upgrade virtualenv \
 ;fi
 
 ###########################################################################

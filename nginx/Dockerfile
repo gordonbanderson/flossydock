@@ -14,6 +14,7 @@ RUN if [ ${CHANGE_SOURCE} = true ]; then \
 
 RUN apk update \
     && apk upgrade \
+    && apk add --no-cache openssl \
     && apk add --no-cache bash \
     && adduser -D -H -u 1000 -s /bin/bash www-data
 
@@ -28,6 +29,8 @@ RUN echo "upstream php-upstream { server ${PHP_UPSTREAM_CONTAINER}:${PHP_UPSTREA
     && echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/nginx/ >> ~/.bashrc
 
 
-CMD ["nginx"]
+ADD ./startup.sh /opt/startup.sh
+RUN sed -i 's/\r//g' /opt/startup.sh
+CMD ["/bin/bash", "/opt/startup.sh"]
 
 EXPOSE 80 443

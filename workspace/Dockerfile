@@ -14,7 +14,7 @@
 
 ARG LARADOCK_PHP_VERSION
 
-# FROM laradock/workspace:2.2-${LARADOCK_PHP_VERSION}
+# FROM flossydock/workspace:2.2-${LARADOCK_PHP_VERSION}
 FROM letsdockerize/laradock-workspace:2.4-${LARADOCK_PHP_VERSION}
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
@@ -29,6 +29,13 @@ USER root
 
 #Trying to circumvent dist download errors
 RUN apt-get update -y && apt-get -y upgrade
+
+################################################
+# Install other software missing from base image
+# @todo Move to a base image
+################################################
+RUN apt-get -y install iputils-ping traceroute vim less figlet sudo wget
+
 
 ###########################################################################
 # Laradock non-root user:
@@ -55,9 +62,12 @@ ENV PGID ${PGID}
 RUN set -xe; \
     apt-get update -yqq && \
     pecl channel-update pecl.php.net && \
-    groupadd -g ${PGID} laradock && \
-    useradd -u ${PUID} -g laradock -m laradock -G docker_env && \
-    usermod -p "*" laradock -s /bin/bash && \
+    groupadd -g ${PGID} flossydock && \
+    useradd -u ${PUID} -g flossydock -m flossydock -G docker_env && \
+    usermod -p "*" flossydock -s /bin/bash && \
+    # Add flossydock to sudo, with no password required
+        adduser flossydock sudo && \
+        echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
     apt-get install -yqq \
       apt-utils \
       #
@@ -66,17 +76,19 @@ RUN set -xe; \
       #--------------------------------------------------------------------------
       #
       # Mandatory Software's such as ("php-cli", "git", "vim", ....) are
-      # installed on the base image 'laradock/workspace' image. If you want
+      # installed on the base image 'flossydock/workspace' image. If you want
       # to add more Software's or remove existing one, you need to edit the
       # base image (https://github.com/Laradock/workspace).
       #
-      # next lines are here becase there is no auto build on dockerhub see https://github.com/laradock/laradock/pull/1903#issuecomment-463142846
+      # next lines are here becase there is no auto build on dockerhub see https://github.com/flossydock/flossydock/pull/1903#issuecomment-463142846
       libzip-dev zip unzip \
       # Install the zip extension
       php${LARADOCK_PHP_VERSION}-zip \
       # nasm
       nasm && \
       php -m | grep -q 'zip'
+
+
 
 #
 #--------------------------------------------------------------------------
@@ -90,11 +102,6 @@ RUN set -xe; \
 #   - ...
 #
 
-################################################
-# Install other software missing from base image
-# @todo Move to a base image
-################################################
-RUN apt-get -y install iputils-ping traceroute vim less figlet sudo wget
 
 ###########################################################################
 # Set Timezone
@@ -104,21 +111,6 @@ ENV TZ ${TZ}
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-
-# Add a non-root user to prevent files being created with root permissions on host machine.
-ARG PUID=1000
-ENV PUID ${PUID}
-ARG PGID=1000
-ENV PGID ${PGID}
-
-RUN groupadd -g ${PGID} flossydock && \
-    useradd -u ${PUID} -g flossydock -m flossydock -G docker_env && \
-    usermod -p "*" flossydock && \
-
-
-    # Add flossydock to sudo, with no password required
-    adduser flossydock sudo && \
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 
 
@@ -171,7 +163,7 @@ ENV COMPOSER_AUTH ${COMPOSER_AUTH}
 
 RUN if [ ${COMPOSER_AUTH} = false ]; then \
     # remove the file
-    rm /home/laradock/.composer/auth.json \
+    rm /home/flossydock/.composer/auth.json \
 ;fi
 
 ARG COMPOSER_REPO_PACKAGIST
@@ -598,7 +590,7 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
         && if [ ${INSTALL_NPM_ANGULAR_CLI} = true ]; then \
         npm install -g @angular/cli \
         ;fi \
-        && ln -s `npm bin --global` /home/laradock/.node-bin \
+        && ln -s `npm bin --global` /home/flossydock/.node-bin \
 ;fi
 
 # Wouldn't execute when added to the RUN statement in the above block
@@ -619,7 +611,7 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
 ;fi
 
 # Add PATH for node
-ENV PATH $PATH:/home/laradock/.node-bin
+ENV PATH $PATH:/home/flossydock/.node-bin
 
 # Make it so the node modules can be executed with 'docker-compose exec'
 # We'll create symbolic links into '/usr/local/bin'.
@@ -670,7 +662,7 @@ RUN if [ ${INSTALL_YARN} = true ]; then \
 ;fi
 
 # Add PATH for YARN
-ENV PATH $PATH:/home/laradock/.yarn/bin
+ENV PATH $PATH:/home/flossydock/.yarn/bin
 
 ###########################################################################
 # PHP Aerospike:
@@ -764,7 +756,7 @@ RUN if [ ${INSTALL_LARAVEL_ENVOY} = true ]; then \
 # Laravel Installer:
 ###########################################################################
 
-USER laradock
+USER flossydock
 
 ARG COMPOSER_REPO_PACKAGIST
 ENV COMPOSER_REPO_PACKAGIST ${COMPOSER_REPO_PACKAGIST}
@@ -955,7 +947,7 @@ RUN if [ ${INSTALL_POWERLINE} = true ]; then \
   ;fi \
 ;fi
 
-USER laradock
+USER flossydock
 
 ###########################################################################
 # ImageMagick:
@@ -999,6 +991,16 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
     && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
     && apt-get update \
     && apt-get -y install postgresql-client-10 \
+;fi
+
+####################################
+# pgsql client, php
+####################################
+ARG WORKSPACE_INSTALL_PHP_PG_CLIENT=false
+RUN if [ ${WORKSPACE_INSTALL_PHP_PG_CLIENT} = true ]; then \
+    # Install the mysql client
+    apt-get update -yqq && \
+    apt-get install -y apt-get install php${LARADOCK_PHP_VERSION}-pgsql \
 ;fi
 
 

@@ -121,6 +121,7 @@ RUN if [ ${INSTALL_XSL} = true ]; then \
 ARG INSTALL_PGSQL=false
 
 RUN if [ ${INSTALL_PGSQL} = true ]; then \
+    echo '**** INSTALLING PGSQL EXTENSION ****' \
     # Install the pgsql extension
     docker-php-ext-install pgsql \
 ;fi

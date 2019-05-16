@@ -34,8 +34,6 @@ RUN apt-get update -y && apt-get -y upgrade
 # Laradock non-root user:
 ###########################################################################
 
-<<<<<<< HEAD
-
 #
 #--------------------------------------------------------------------------
 # Mandatory Software's Installation
@@ -46,7 +44,7 @@ RUN apt-get update -y && apt-get -y upgrade
 # to add more Software's or remove existing one, you need to edit the
 # base image (https://github.com/Laradock/workspace).
 #
-=======
+
 # Add a non-root user to prevent files being created with root permissions on host machine.
 ARG PUID=1000
 ENV PUID ${PUID}
@@ -79,7 +77,6 @@ RUN set -xe; \
       # nasm
       nasm && \
       php -m | grep -q 'zip'
->>>>>>> master
 
 #
 #--------------------------------------------------------------------------
@@ -903,11 +900,7 @@ USER root
 ARG INSTALL_IMAGE_OPTIMIZERS=false
 
 RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
-<<<<<<< HEAD
     apt-get install -y --force-yes jpegoptim optipng libpng16-dev pngquant gifsicle && \
-=======
-    apt-get install -y jpegoptim optipng pngquant gifsicle && \
->>>>>>> master
     if [ ${INSTALL_NODE} = true ]; then \
         exec bash && . ~/.bashrc && npm install -g svgo \
     ;fi\
@@ -943,12 +936,7 @@ ARG INSTALL_PYTHON=false
 
 RUN if [ ${INSTALL_PYTHON} = true ]; then \
   apt-get -y install python python-pip python-dev build-essential  \
-<<<<<<< HEAD
-  && pip install --upgrade pip  \
-  #&& pip install --upgrade virtualenv \
-=======
   && python -m pip install --upgrade pip  \
->>>>>>> master
   && python -m pip install --upgrade virtualenv \
 ;fi
 

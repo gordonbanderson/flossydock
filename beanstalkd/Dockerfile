@@ -1,7 +1,19 @@
 FROM alpine
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
-RUN apk add --no-cache beanstalkd
+ENV DEBIAN_FRONTEND noninteractive
+ENV PATH /usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+RUN apt-get update
+RUN apt-get install -y beanstalkd
+
+ARG BASH_PS1
+ENV BASH_PS1 ${BASH_PS1}
+RUN echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/beanstalkd/ >> ~/.bashrc
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+VOLUME /var/lib/beanstalkd/data
 
 EXPOSE 11300
 ENTRYPOINT ["/usr/bin/beanstalkd"]

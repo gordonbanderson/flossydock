@@ -998,7 +998,7 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
 ####################################
 ARG WORKSPACE_INSTALL_PHP_PG_CLIENT=false
 RUN if [ ${WORKSPACE_INSTALL_PHP_PG_CLIENT} = true ]; then \
-    # Install the mysql client
+    # Install the pgsql client
     apt-get update -yqq && \
     apt-get install -y apt-get install php${LARADOCK_PHP_VERSION}-pgsql \
 ;fi

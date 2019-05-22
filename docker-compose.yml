@@ -713,6 +713,9 @@ services:
       environment:
         - CN=www.gordonbanderson.com
         - EMAIL=gordon.b.anderson@gmail.com
+      ports:
+        - "80:80"
+        - "443:443"
       networks:
         - frontend
 

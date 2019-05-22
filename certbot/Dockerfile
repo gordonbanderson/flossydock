@@ -7,7 +7,7 @@ COPY run-certbot.sh /root/certbot/run-certbot.sh
 RUN apt-get update
 RUN apt-get install -y letsencrypt python-certbot-nginx
 
-sudo ufw allow 80
+RUN sudo ufw allow 80
 
 
 

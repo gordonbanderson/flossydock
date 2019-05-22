@@ -5,6 +5,11 @@ LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 COPY run-certbot.sh /root/certbot/run-certbot.sh
 
 RUN apt-get update
-RUN apt-get install -y letsencrypt
+RUN apt-get install -y letsencrypt python-certbot-nginx
+
+sudo ufw allow 80
+
+
+
 
 ENTRYPOINT bash -c "bash /root/certbot/run-certbot.sh && sleep infinity"

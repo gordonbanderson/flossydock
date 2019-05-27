@@ -67,7 +67,7 @@ RUN set -xe; \
     usermod -p "*" flossydock -s /bin/bash && \
     # Add flossydock to sudo, with no password required
         adduser flossydock sudo && \
-        echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
+        echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     apt-get install -yqq \
       apt-utils \
       #

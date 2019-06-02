@@ -227,6 +227,21 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
 ;fi
 
 ###########################################################################
+# Taint EXTENSION
+###########################################################################
+
+ARG INSTALL_TAINT=false
+
+RUN if [ ${INSTALL_TAINT} = true ]; then \
+    # Install Php TAINT Extension
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+      pecl install taint && \
+      docker-php-ext-enable taint && \
+      php -m | grep -q 'taint'; \
+    fi \
+;fi
+
+###########################################################################
 # MongoDB:
 ###########################################################################
 
@@ -241,6 +256,34 @@ RUN if [ ${INSTALL_MONGO} = true ]; then \
     pecl install mongodb && \
     docker-php-ext-enable mongodb \
 ;fi
+
+###########################################################################
+# Xhprof:
+###########################################################################
+
+ARG INSTALL_XHPROF=false
+
+RUN if [ ${INSTALL_XHPROF} = true ]; then \
+    # Install the php xhprof extension 
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = 7 ]; then \
+      curl -L -o /tmp/xhprof.tar.gz "https://github.com/tideways/php-xhprof-extension/archive/v4.1.6.tar.gz"; \
+    else \ 
+      curl -L -o /tmp/xhprof.tar.gz "https://codeload.github.com/phacility/xhprof/tar.gz/master"; \
+    fi \
+    && mkdir -p xhprof \
+    && tar -C xhprof -zxvf /tmp/xhprof.tar.gz --strip 1 \
+    && ( \
+        cd xhprof \
+        && phpize \
+        && ./configure \
+        && make \
+        && make install \
+    ) \
+    && rm -r xhprof \
+    && rm /tmp/xhprof.tar.gz \
+;fi
+
+COPY ./xhprof.ini /usr/local/etc/php/conf.d
 
 ###########################################################################
 # AMQP:

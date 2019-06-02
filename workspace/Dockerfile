@@ -129,10 +129,15 @@ RUN sed -i 's/\r//' /root/aliases.sh && \
 
 USER flossydock
 
+ARG BASH_PS1
+ENV BASH_PS1 ${BASH_PS1}
+
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source ~/aliases.sh" >> ~/.bashrc && \
-	  echo "" >> ~/.bashrc
+	  echo "" >> ~/.bashrc && \
+	  echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/workspace/ >> ~/.bashrc
+
 
 ###########################################################################
 # Composer:

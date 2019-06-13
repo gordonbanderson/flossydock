@@ -67,7 +67,7 @@ RUN set -xe; \
     usermod -p "*" flossydock -s /bin/bash && \
     # Add flossydock to sudo, with no password required
         adduser flossydock sudo && \
-        echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
+        echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     apt-get install -yqq \
       apt-utils \
       #
@@ -129,10 +129,15 @@ RUN sed -i 's/\r//' /root/aliases.sh && \
 
 USER flossydock
 
+ARG BASH_PS1
+ENV BASH_PS1 ${BASH_PS1}
+
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source ~/aliases.sh" >> ~/.bashrc && \
-	  echo "" >> ~/.bashrc
+	  echo "" >> ~/.bashrc && \
+	  echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/workspace/ >> ~/.bashrc
+
 
 ###########################################################################
 # Composer:
@@ -391,7 +396,7 @@ ARG BLACKFIRE_CLIENT_TOKEN
 ENV BLACKFIRE_CLIENT_TOKEN ${BLACKFIRE_CLIENT_TOKEN}
 
 RUN if [ ${INSTALL_XDEBUG} = false -a ${INSTALL_BLACKFIRE} = true ]; then \
-    curl -L https://packagecloud.io/gpg.key | apt-key add - && \
+    curl -L https://packages.blackfire.io/gpg.key | apt-key add - && \
     echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list && \
     apt-get update -yqq && \
     apt-get install blackfire-agent \
@@ -479,6 +484,22 @@ RUN if [ ${INSTALL_SWOOLE} = true ]; then \
     echo "extension=swoole.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini && \
     ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/swoole.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-swoole.ini \
     && php -m | grep -q 'swoole' \
+;fi
+
+###########################################################################
+# Taint EXTENSION
+###########################################################################
+
+ARG INSTALL_TAINT=false
+
+RUN if [ "${INSTALL_TAINT}" = true ]; then \
+    # Install Php TAINT Extension
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+      pecl install taint && \
+      echo "extension=taint.so" >> /etc/php/${LARADOCK_PHP_VERSION}/mods-available/taint.ini && \
+      ln -s /etc/php/${LARADOCK_PHP_VERSION}/mods-available/taint.ini /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-taint.ini && \
+      php -m | grep -q 'taint'; \
+    fi \
 ;fi
 
 ###########################################################################
@@ -998,7 +1019,7 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
 ####################################
 ARG WORKSPACE_INSTALL_PHP_PG_CLIENT=false
 RUN if [ ${WORKSPACE_INSTALL_PHP_PG_CLIENT} = true ]; then \
-    # Install the mysql client
+    # Install the pgsql client
     apt-get update -yqq && \
     apt-get install -y apt-get install php${LARADOCK_PHP_VERSION}-pgsql \
 ;fi

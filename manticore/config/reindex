@@ -1,0 +1,2 @@
+echo '**** REINDEXING VIA A TRIGGER ****'
+indexer --all --verbose --rotate

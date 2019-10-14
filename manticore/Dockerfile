@@ -1,16 +1,17 @@
 FROM manticoresearch/manticore
 
 RUN apt-get update && \
-  apt-get install -y python python-pip && \
+  apt-get install -y python python-pip bash && \
   python --version && \
   pip install https://github.com/joh/when-changed/archive/master.zip
 
-RUN apt-get install bash
 
 #Update bash prompt
 ARG BASH_PS1
 ENV BASH_PS1 ${BASH_PS1}
-RUN echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/mariadb/ >> ~/.bashrc
+RUN echo 'export PS1='$BASH_PS1 | sed s/HOSTNAME/manticore/ >> ~/.bashrc
+RUN ls -lh /var/run
+RUN echo '********************************************************'
 
 ENV DEBIAN_FRONTEND newt
 

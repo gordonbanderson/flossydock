@@ -1,0 +1,160 @@
+
+path: /etc/letsencrypt/live/gordonbanderson.com/
+
+
+ON DOCKER HOST:
+sudo add-apt-repository -y ppa:certbot/certbot
+sudo apt update
+sudo apt install certbot
+sudo ufw allow 80
+
+sudo apt-get install certbot python-certbot-nginx
+
+
+
+#To update or install cert
+sudo certbot certonly --standalone --preferred-challenges http --email "gordon.b.anderson@gmail.com" --agree-tos -d gordonbanderson.com -d www.gordonbanderson.com
+
+?sudo certbot certonly --preferred-challenges http --email "gordon.b.anderson@gmail.com" --agree-tos --nginx -d gordonbanderson.com
+
+
+# move to flossy dock
+
+#This fails to load the default.crt file
+sudo openssl x509 -outform der -in /etc/letsencrypt/live/gordonbanderson.com/fullchain.pem -out ./nginx/ssl/default.crt
+sudo openssl pkey -in /etc/letsencrypt/live/gordonbanderson.com/privkey.pem -out ./nginx/ssl/default.key
+
+#This does not barf
+sudo cp /etc/letsencrypt/live/gordonbanderson.com/fullchain.pem nginx/ssl
+
+#sudo openssl x509 -outform der -in /etc/letsencrypt/live/gordonbanderson.com/cert.pem -out ./nginx/ssl/default.crt
+#sudo openssl pkey -in /etc/letsencrypt/live/gordonbanderson.com/cert.pem -out ./nginx/ssl/default.key
+
+sudo apt-get remove certbot nginx
+
+#TODO Use a container
+
+
+fullchain and privkey?
+
+
+#---- redirects ----
+Merge these when more alert
+
+http->https
+
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	server_name example.com www.example.com;
+	return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 80;
+
+    server_name www.mydomain.io;
+
+    rewrite ^ $scheme://mydomain.io$uri permanent;
+}
+
+server {
+    listen 80;
+
+    server_name mydomain.io;
+
+    # your normal server block definitions here
+}
+
+
+IP
+--------------
+165.22.249.136
+
+FIXED:
+------
+1) Use 127.0.0.1:5432:5432 to forward ports to localhost only (default is the world)
+2) Namecheap installs a URL forward, remove that DNS record
+
+To FIX
+------
+1) pgsql not being installed for prod.  Need to review and double check variable names
+2) Figure out how to automate certbot.  It's not working from a container as port 80 is not being forwarded.  Oh, docker compose file?##
+#3) Automate hiding of display errors. (flossydock .env)
+#4) CSS: Heading spacing is not pleasing vertically
+# 5) Add this to packagist git@github.com:gordonbanderson/forms-ss4-bootstrap-theme.git , and also log into packagist appropriately
+6) Fix twitter table name and bump major tag as it's backwards breaking
+# 7) Summary is showing as lipsum, perhaps issue with custom setting?
+# 8) Enable comments not working, but may be due to the utils theme not updating via packagist
+# 9) Make logo a link
+#10) SilverStripe comments spam protection
+#11) Blog images on home page need lazy image
+#12) Blog images on home page not links
+13) RSS barfing on blog
+14) Search with sphinx or manticore, add netcat command to reindex?
+# 15) Get Flickr short code working
+16) Is there a built in image short code?
+# s17) Check EmbeddedTweet, logic in TwitterShortCodeHandler commented out
+18) Lazy load flickr images
+#19) APerture not being saved during import process
+20) Shortcode flickr template needs flickr icon fixed
+21) Photographer name not showing
+22) Sizes imported do not match the download options on Flickr website
+23) Check order of images in FlickrSetPage
+24) Flexslider not working with Laravel mix
+25) Background image path incorrect wrt to theme for Photoswipe.  Arrows are not showing.  Either fix in webpack, or
+post process the CSS file with sed to change the path
+
+
+<% require css("weboftalent/flickr:css/flickr.css") %>
+<% require css("weboftalent/flickr:thirdparty/photoswipe/photoswipe.css") %>
+<% require css("weboftalent/flickr:thirdparty/photoswipe/default-skin/default-skin.css") %>
+
+<% require javascript("weboftalent/flickr:thirdparty/photoswipe/photoswipe.min.js") %>
+<% require javascript("weboftalent/flickr:thirdparty/photoswipe/photoswipe-ui-default.min.js") %>
+<% require javascript("weboftalent/flickr:javascript/flickrswipe.js") %>
+
+
+
+
+Packagist
+Packagist
+---------
+https://packagist.org/api/github?username=weboftalent
+2c921jrvckis440wgss0
+/settings/hooks/new
+
+Admin
+-----
+gordon.b.anderson@gmail.com / Aibohsh4nahva0cheigh
+
+Postgres
+-------
+SET search_path TO my_schema, public;
+
+Mailgun
+-------
+This works, swaks is a tool for testing smtp
+
+swaks --auth \
+    --server smtp.mailgun.org \
+    --au postmaster@sandbox06cd91eecc7446028116a23488af2bb2.mailgun.org \
+    --ap ca3a5e003a73177f1d9268b2af89fbe2-52b0ea77-a52fcef9 \
+    --to gordon.b.anderson@gmail.com \
+    --h-Subject: "Hello" \
+    --body 'Testing some Mailgun awesomness!'
+
+
+
+
+
+Pages
+-----
+
+
+
+
+
+
+
+London Spirit, Welsh Fire (Cardiff), Southern Brave (Southampton), Birmingham Phoenix, Leeds Superchargers and Trent Rockets (Nottingham).

@@ -282,6 +282,7 @@ services:
         - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
         - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
         - ${NGINX_SSL_PATH}:/etc/nginx/ssl
+        - ./data/certbot/:/etc/letsencrypt/live/
 
           # From https://github.com/laradock/laradock/issues/1012#issuecomment-427121338
         - ./data/certbot/certs/:/var/certs
@@ -735,7 +736,8 @@ services:
         context: ./certbot
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
-        - ./data/certbot/certs/:/var/certs
+          #    - ./data/certbot/certs/:/var/certs
+        - ./data/certbot/:/etc/letsencrypt/live/
         - ./certbot/letsencrypt/:/var/www/letsencrypt
       environment:
         - CN=www.gordonbanderson.com

@@ -136,6 +136,7 @@ services:
 ### PHP-FPM ##############################################
 
     php-fpm:
+      restart: always
       build:
         context: ./php-fpm
         args:

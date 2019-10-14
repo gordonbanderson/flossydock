@@ -249,6 +249,7 @@ services:
 
 ### NGINX Server #########################################
     nginx:
+      restart: always
       build:
         context: ./nginx
         args:
@@ -436,6 +437,7 @@ services:
 
 ### PostgreSQL PostGis ###################################
     postgres-postgis:
+      restart: always
       build: ./postgres-postgis
       volumes:
         - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
@@ -533,6 +535,7 @@ services:
 
 ### Memcached ############################################
     memcached:
+      restart: always
       build:
         context: ./memcached
         args:
@@ -1337,6 +1340,7 @@ services:
 
 ### Manticore Search ###########################################
     manticore:
+      restart: always
       build:
         context: ./manticore
       volumes:

@@ -17,4 +17,4 @@ RUN apt-get install -y letsencrypt python-certbot-nginx ufw
 
 
 
-ENTRYPOINT bash -c "bash /root/certbot/run-certbot.sh && sleep infinity"
+ENTRYPOINT bash -c "bash /root/certbot/run-certbot.sh"

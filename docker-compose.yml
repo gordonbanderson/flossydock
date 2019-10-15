@@ -266,7 +266,7 @@ services:
 
 ### NGINX Server #########################################
     nginx:
-      restart: always
+            #  restart: always
       build:
         context: ./nginx
         args:
@@ -282,7 +282,7 @@ services:
         - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
         - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
         - ${NGINX_SSL_PATH}:/etc/nginx/ssl
-        - ./data/certbot/:/etc/letsencrypt/live/
+        - ./data/certbot/:/etc/
 
           # From https://github.com/laradock/laradock/issues/1012#issuecomment-427121338
         - ./data/certbot/certs/:/var/certs
@@ -737,8 +737,10 @@ services:
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
           #    - ./data/certbot/certs/:/var/certs
-        - ./data/certbot/:/etc/letsencrypt/live/
-        - ./certbot/letsencrypt/:/var/www/letsencrypt
+        - ./data/certbot/live:/etc/letsencrypt/live/
+        - ./data/certbot/archive:/etc/letsencrypt/archive/
+          # GBA: Think this is irrelevant as using nginx, not standalone
+          # - ./certbot/letsencrypt/:/var/www/letsencrypt
       environment:
         - CN=www.gordonbanderson.com
         - EMAIL=gordon.b.anderson@gmail.com

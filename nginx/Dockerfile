@@ -38,6 +38,6 @@ RUN echo "upstream php-upstream { server ${PHP_UPSTREAM_CONTAINER}:${PHP_UPSTREA
 
 ADD ./startup.sh /opt/startup.sh
 RUN sed -i 's/\r//g' /opt/startup.sh
+#RUN tail -f /dev/null
 CMD ["/bin/bash", "/opt/startup.sh"]
-
 EXPOSE 80 443

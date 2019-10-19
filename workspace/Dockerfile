@@ -28,7 +28,8 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 
 #Trying to circumvent dist download errors
-RUN apt-get update -y && apt-get -y upgrade
+RUN apt-get -o Dpkg::Options::="--force-confdef" update -y -q
+RUN apt-get -o Dpkg::Options::="--force-confdef" -y -q upgrade
 
 ################################################
 # Install other software missing from base image

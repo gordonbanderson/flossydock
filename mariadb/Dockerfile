@@ -1,4 +1,5 @@
-FROM mariadb:latest
+ARG MARIADB_VERSION=latest
+FROM mariadb:${MARIADB_VERSION}
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
@@ -18,6 +19,15 @@ RUN echo 'export MYSQL_PS1='$MYSQL_PS1 | sed s/HOSTNAME/mariadb/ >> ~/.bashrc
 
 
 # @todo MariaDB prompt
+
+#####################################
+# Set Timezone
+#####################################
+
+ARG TZ=UTC
+ENV TZ ${TZ}
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && chown -R mysql:root /var/lib/mysql/
+COPY my.cnf /etc/mysql/conf.d/my.cnf
 
 CMD ["mysqld"]
 

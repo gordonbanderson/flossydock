@@ -313,8 +313,10 @@ services:
 
          # GBA attempt to fix, with the live symlink being correct wrt to archive dir
         # Note, that the renew command must be run for subsequent certbot attempts
-        - ./data/certbot/live:/etc/letsencrypt/live/
-        - ./data/certbot/archive:/etc/letsencrypt/archive/
+        #- ./data/certbot/live:/etc/letsencrypt/live/
+        #- ./data/certbot/archive:/etc/letsencrypt/archive/
+        - ./data/certbot/letsencrypt:/etc/letsencrypt
+
       ports:
         - "${NGINX_HOST_HTTP_PORT}:80"
         - "${NGINX_HOST_HTTPS_PORT}:443"
@@ -838,8 +840,7 @@ services:
       volumes:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
           #    - ./data/certbot/certs/:/var/certs
-        - ./data/certbot/live:/etc/letsencrypt/live/
-        - ./data/certbot/archive:/etc/letsencrypt/archive/
+        - ./data/certbot/letsencrypt:/etc/letsencrypt
           # GBA: Think this is irrelevant as using nginx, not standalone
           # - ./certbot/letsencrypt/:/var/www/letsencrypt
       environment:

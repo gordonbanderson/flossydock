@@ -1,0 +1,9 @@
+#!/bin/bash
+date
+FILE=/etc/sphinxsearch/reindexflag
+if test -f "$FILE"; then
+    rm $FILE
+
+    # This is failing from cron as the search.pid file cannot be found
+    gosu manticore indexer --all --rotate
+fi

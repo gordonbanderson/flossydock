@@ -1,0 +1,6 @@
+# Reindex manticore if a flag file is present
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+*/1 * * * * root date >> /tmp/indexcheck && /root/reindex-cron-job >> /var/log/cron.log 2>&1

@@ -1,5 +1,4 @@
 #!/bin/bash
-date
 FILE=/etc/sphinxsearch/reindexflag
 if test -f "$FILE"; then
     rm $FILE

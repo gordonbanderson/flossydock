@@ -6,6 +6,7 @@ networks:
   backend:
     driver: ${NETWORKS_DRIVER}
 
+
 volumes:
   mysql:
     driver: ${VOLUMES_DRIVER}
@@ -1500,7 +1501,7 @@ services:
 
 ### Manticore Search ###########################################
     manticore:
-      restart: always
+      #restart: always
       build:
         context: ./manticore
       volumes:

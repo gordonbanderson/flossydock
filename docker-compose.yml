@@ -527,6 +527,7 @@ services:
       restart: always
       build: ./postgres-postgis
       volumes:
+        - /home/gordon/backups:/root/backups
         - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
       ports:
         - "127.0.0.1:${POSTGRES_PORT}:5432"

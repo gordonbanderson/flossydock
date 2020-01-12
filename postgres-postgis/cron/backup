@@ -1,0 +1,3 @@
+#!/bin/sh
+pg_dump --user=elgordo AUCC | gzip > "/root/backups/aucc-$(date  +%F_%R).sql.gz"
+

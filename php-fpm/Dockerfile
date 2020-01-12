@@ -53,7 +53,8 @@ RUN set -xe; \
       #
       # next lines are here becase there is no auto build on dockerhub see https://github.com/laradock/laradock/pull/1903#issuecomment-463142846
       libzip-dev zip unzip && \
-      docker-php-ext-configure zip --with-libzip && \
+      # this fails with 7.4
+      #docker-php-ext-configure zip --with-libzip && \
       # Install the zip extension
       docker-php-ext-install zip && \
       php -m | grep -q 'zip'
@@ -935,8 +936,8 @@ ENV PUID ${PUID}
 ARG PGID=1000
 ENV PGID ${PGID}
 
-RUN groupmod -o -g ${PGID} www-data && \
-    usermod -o -u ${PUID} -g www-data www-data
+#RUN groupmod -o -g ${PGID} www-data && \
+#    usermod -o -u ${PUID} -g www-data www-data
 
 # Adding the faketime library to the preload file needs to be done last
 # otherwise it will preload it for all commands that follow in this file

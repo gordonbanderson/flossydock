@@ -11,6 +11,10 @@ echo $CN
 echo 'RENEW'
 echo $RENEW
 
+certbot  renew
+exit
+
+
 if [ $RENEW -eq 1 ]
 then
   echo "Checking certs for renew"
@@ -20,14 +24,15 @@ else
 
   find /etc/letsencrypt
 
-#certbot certonly -v  --no-eff-email --webroot  --preferred-challenges http --email "gordon.b.anderson+aucc@gmail.com" --agree-tos -d arbroathunited.cc -d www.arbroathunited.cc -d cdn.arbroathunited.cc -d admin.arbroathunited.cc -w /var/www/aucc/public/
+#certbot certonly -v  --no-eff-email --webroot   --preferred-challenges http --email "gordon.b.anderson+aucc@gmail.com" --agree-tos -d arbroathunited.cc -d www.arbroathunited.cc -d cdn.arbroathunited.cc -d admin.arbroathunited.cc -w /var/www/aucc/public/
 
 echo 'CREATING ERTS';
 
 certbot --version
 dpkg -l | grep certbot
 
-certbot certonly -v  --dry-run  --no-eff-email --webroot  --preferred-challenges http --email "gordon.b.anderson+gba@gmail.com" --agree-tos -d gordonbanderson.com -d www.gordonbanderson.com -w /var/www/gba/public/
+#Run with certbot 0.31, remove dry-run to create new certs
+#certbot certonly -v  --dry-run  --no-eff-email --webroot  --preferred-challenges http --email "gordon.b.anderson+gba@gmail.com" --agree-tos -d gordonbanderson.com -d www.gordonbanderson.com -w /var/www/gba/public/
 
 
 # certbot certonly -v  --staging --no-eff-email --webroot  --preferred-challenges http --email "gordon.b.anderson+gba@gmail.com" --agree-tos -d gordonbanderson.com -d www.gordonbanderson.com -w /var/www/gba/public/
